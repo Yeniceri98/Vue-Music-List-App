@@ -21,7 +21,7 @@ export default {
         const { error, login, isPending } = useLogin()
 
         const handleSubmit = async () => {
-            const res = await login(email.value, password.value)      // useLogin composable'ında email ve password tanımlanmıştı
+            const res = await login(email.value, password.value)      // useLogin composable'ının içindeki login'de email ve password tanımlanmıştı
             
             if (!error.value) {
                 console.log("user logged in")
