@@ -1,9 +1,6 @@
 <template>
   <div class="home">
-    <p>adadsasd</p>
-    <form>
-        <textarea>asdadsasd</textarea>
-    </form>
+    <p>Home</p>
   </div>
 </template>
 
