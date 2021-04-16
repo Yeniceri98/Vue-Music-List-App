@@ -4,7 +4,8 @@
         <input type="email" placeholder="E-mail" v-model="email">
         <input type="password" placeholder="Password" v-model="password">
         <div v-if="error" class="error">{{ error }}</div>
-        <button>Login</button>
+        <button v-if="!isPending">Login</button>
+        <button v-if="isPending" disabled>Loading</button>          <!-- isPending'i tüm composable'larda aynı şekilde kullandık -->
     </form>
 </template>
 
@@ -17,7 +18,7 @@ export default {
         const email = ref('')
         const password = ref('')
 
-        const { error, login } = useLogin()
+        const { error, login, isPending } = useLogin()
 
         const handleSubmit = async () => {
             const res = await login(email.value, password.value)      // useLogin composable'ında email ve password tanımlanmıştı
@@ -27,7 +28,7 @@ export default {
             }
         }
 
-        return { email, password, error, handleSubmit }
+        return { email, password, error, handleSubmit, isPending }
     }
 }
 </script>

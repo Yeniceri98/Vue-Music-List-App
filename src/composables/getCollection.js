@@ -1,6 +1,7 @@
 import { ref, watchEffect } from 'vue'
 import { projectFirestore } from '../firebase/config'
 
+
 const getCollection = (collection) => {
     const documents = ref(null)
     const error = ref(null)         // 2 farklı collection'da farklı errorlar olabileceği için bunu global olarak tanımlamadık. Mesela useSignup.js'de errorlar ortak olarak görüntüleneceği için global şekilde tanımladık
