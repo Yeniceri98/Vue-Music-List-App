@@ -4,10 +4,13 @@
             <img src="@/assets/logo.jpg" alt="logo">        <!-- @/ yaparsak direkt src klasörüne gider. Bu şekilde de kullanımı vardır-->
             <h1><router-link :to="{ name: 'Home' }">Music List</router-link></h1>
             <div class="links">
-                <button @click="handleLogout">Logout</button>
-                <div v-if="error" class="error">{{ error }}</div>
-                <router-link class="btn" :to="{ name: 'Signup' }">Sign up</router-link>
-                <router-link class="btn" :to="{ name: 'Login' }">Log in</router-link>
+                <div v-if="user">
+                    <button @click="handleLogout">Logout</button>
+                </div>
+                <div v-else>
+                    <router-link class="btn" :to="{ name: 'Signup' }">Sign up</router-link>
+                    <router-link class="btn" :to="{ name: 'Login' }">Log in</router-link>
+                </div>
             </div>
         </nav>
     </div>
@@ -15,12 +18,14 @@
 
 <script>
 import useLogout from '../composables/useLogout'
+import getUser from '@/composables/getUser'
 import { useRouter } from 'vue-router';
 
 export default {
     setup() {
-        const { error, logout } = useLogout()
-        const router = useRouter();
+        const { logout } = useLogout()
+        const { user } = getUser()
+        const router = useRouter()
 
         const handleLogout = async () => {
             await logout()
@@ -28,7 +33,11 @@ export default {
             router.push({ name: 'Login' })
         }
 
-        return { error, logout, handleLogout }
+        const handleSignup = async () => {
+            router.push({ name: 'Login' })
+        }
+
+        return { logout, handleLogout, user, handleSignup }
     }
 }
 </script>

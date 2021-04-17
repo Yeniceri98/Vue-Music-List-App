@@ -13,6 +13,7 @@
 <script>
 import { ref } from 'vue'
 import useSignup from '../../composables/useSignup'
+import { useRouter } from 'vue-router'
 
 export default {
     setup() {
@@ -22,12 +23,15 @@ export default {
 
         const { error, signup, isPending } = useSignup()
 
+        const router = useRouter()
+
         const handleSubmit = async () => {                                                  // signup fonksiyonu await'li yapıda olduğu için async yapılmalıdır
             const res = await signup(email.value, password.value, displayName.value)        // Bu sıralama, signup fonksiyonundaki sıralamayla aynı olmazsa hata verir 
 
             if (!error.value) {
                 console.log("user signed up")
-            }
+                router.push({ name: 'Login' })
+            }             
         }
 
         return { displayName, email, password, error, isPending, handleSubmit }

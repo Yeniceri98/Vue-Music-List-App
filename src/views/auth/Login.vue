@@ -25,6 +25,8 @@ export default {
             
             if (!error.value) {
                 console.log("user logged in")
+                email.value = ''
+                password.value = ''
             }
         }
 
