@@ -4,7 +4,8 @@
             <img src="@/assets/logo.jpg" alt="logo">        <!-- @/ yaparsak direkt src klasörüne gider. Bu şekilde de kullanımı vardır-->
             <h1><router-link :to="{ name: 'Home' }">Music List</router-link></h1>
             <div class="links">
-                <button>Logout</button>
+                <button @click="handleLogout">Logout</button>
+                <div v-if="error" class="error">{{ error }}</div>
                 <router-link class="btn" :to="{ name: 'Signup' }">Sign up</router-link>
                 <router-link class="btn" :to="{ name: 'Login' }">Log in</router-link>
             </div>
@@ -13,8 +14,22 @@
 </template>
 
 <script>
-export default {
+import useLogout from '../composables/useLogout'
+import { useRouter } from 'vue-router';
 
+export default {
+    setup() {
+        const { error, logout } = useLogout()
+        const router = useRouter();
+
+        const handleLogout = async () => {
+            await logout()
+            console.log("User logged out")
+            router.push({ name: 'Login' })
+        }
+
+        return { error, logout, handleLogout }
+    }
 }
 </script>
 
