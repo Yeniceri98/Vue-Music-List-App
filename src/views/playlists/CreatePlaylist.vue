@@ -10,7 +10,8 @@
 
         <div class="error"></div>
         <div class="buttonContainer">
-            <button>Create</button>
+            <button v-if="!isPending">Create</button>
+            <button v-else disabled>Saving...</button>
         </div>
     </form>
 </template>
@@ -18,6 +19,9 @@
 <script>
 import { ref } from 'vue'
 import useStorage from '@/composables/useStorage'
+import useCollection from '@/composables/useCollection'
+import getUser from '@/composables/getUser'
+import { timestamp } from '../../firebase/config'
 
 export default {
     setup() {
@@ -25,15 +29,38 @@ export default {
         const description = ref('')
         const file = ref(null)
         const fileError = ref(null)
+        const isPending = ref(false)
 
         const { filePath, url, uploadImage } = useStorage()
+        const { error, addDoc } = useCollection('playlists')        // Firebase Firestore'un içinde "playlists" adında collection oluşturacak
+        const { user } = getUser()                                  // Kullanıcının id ve name'ini alabilmek için kullanılacak
 
         const handleSubmit = async () => {
-            if (file.value) {           // file.value'nun true olduğu yani sadece png veya jpg dosyası yüklendiğinde çalışır
-                console.log(title.value, description.value, file.value)
+            // file.value'nun true olduğu yani sadece png veya jpg dosyası yüklendiğinde çalışacak
+            if (file.value) {           
+                isPending.value = true
                 
+                // Upload Image to Firebase
                 await uploadImage(file.value)
                 console.log("Image uploaded, URL:", url.value)
+
+                // Adding New Collection in Firebase Firestore
+                await addDoc({
+                    title: title.value,
+                    description: description.value,
+                    userId: user.value.uid,
+                    userName: user.value.displayName,
+                    coverURL: url.value,
+                    filePath: filePath.value,
+                    songs: [],
+                    createdAt: timestamp()
+                })
+
+                isPending.value = false
+
+                if (!error.value) {
+                    console.log("Playlist added")
+                }
             }
         }
 
@@ -56,7 +83,7 @@ export default {
             }
         }
 
-        return { title, description, handleSubmit, handleChange, fileError }
+        return { title, description, handleSubmit, handleChange, fileError, isPending }
     }
 }
 </script>
