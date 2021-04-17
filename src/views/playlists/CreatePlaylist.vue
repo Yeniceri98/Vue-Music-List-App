@@ -6,9 +6,11 @@
         
         <label>Upload playlist cover image</label>
         <input type="file">
-        
+
         <div class="error"></div>
-        <button>Create</button>
+        <div class="buttonContainer">
+            <button>Create</button>
+        </div>
     </form>
 </template>
 
@@ -38,6 +40,9 @@ export default {
         font-size: 14px;
         display: block;
         margin-top: 30px;
+    }
+    .buttonContainer {
+        text-align: center;         /*  display: flex; dedikten sonra align-items: center; şeklinde de butonu ortalayabiliriz  */
     }
     button {
         margin-top: 10px;
