@@ -5,7 +5,8 @@
         <textarea required placeholder="Playlist Description" v-model="description"></textarea>
         
         <label>Upload playlist cover image</label>
-        <input type="file">
+        <input type="file" @change="handleChange">
+        <div class="error">{{ fileError }}</div>
 
         <div class="error"></div>
         <div class="buttonContainer">
@@ -21,12 +22,35 @@ export default {
     setup() {
         const title = ref('')
         const description = ref('')
+        const file = ref(null)
+        const fileError = ref(null)
 
         const handleSubmit = () => {
-            console.log(title.value, description.value)
+            if (file.value) {           // file.value'nun true olduğu yani sadece png veya jpg dosyası yüklendiğinde çalışır
+                console.log(title.value, description.value, file.value)
+            }
         }
 
-        return { title, description, handleSubmit }
+        // Allowed File Types
+        // Seçilen dosya png veya jpeg değilse dosyayı kabul etmemesini sağlayacağız. Bunu alttaki if-else kısmında selectedFİle'ın property'lerinden biri olan "type" a bakarak yapıyoruz
+        const types = ['image/png', 'image/jpeg']       
+        
+        const handleChange = (e) => {
+            const selectedFile = e.target.files[0]      // e.target.files'a inspectten bakıldığı zaman FileList objesi görülür ve onun altında 0 vardır. Direkt o kısma erişmek için [0] yazdık
+            console.log(selectedFile)                   // Inspect kısmından baktığımız zaman lastModified, name, size, type gibi propety'lerinin olduğunu görürüz 
+
+            // Seçilen dosyanın olup olmadığını kontrol etmek için oluşturuldu. Çünkü dosya seç dedikten sonra iptal desek bile undefined adında dosya seçmişiz gibi gösterir
+            // Seçilmiş bir dosya varsa ve dosyanın türü png ya da jpeg ise if bloğu çalışacak
+            if (selectedFile && types.includes(selectedFile.type)) {
+                file.value = selectedFile
+                fileError.value = null
+            } else {
+                file.value = null
+                fileError.value = "Please select an image file (png or jpg)"
+            }
+        }
+
+        return { title, description, handleSubmit, handleChange, fileError }
     }
 }
 </script>
