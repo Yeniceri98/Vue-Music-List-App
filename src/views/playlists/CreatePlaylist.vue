@@ -17,6 +17,7 @@
 
 <script>
 import { ref } from 'vue'
+import useStorage from '@/composables/useStorage'
 
 export default {
     setup() {
@@ -25,9 +26,14 @@ export default {
         const file = ref(null)
         const fileError = ref(null)
 
-        const handleSubmit = () => {
+        const { filePath, url, uploadImage } = useStorage()
+
+        const handleSubmit = async () => {
             if (file.value) {           // file.value'nun true olduğu yani sadece png veya jpg dosyası yüklendiğinde çalışır
                 console.log(title.value, description.value, file.value)
+                
+                await uploadImage(file.value)
+                console.log("Image uploaded, URL:", url.value)
             }
         }
 
