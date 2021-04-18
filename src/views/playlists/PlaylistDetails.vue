@@ -26,6 +26,8 @@ import getDocument from '@/composables/getDocument'
 import getUser from '@/composables/getUser'             // Kullanıcı bilgilerini almak için import ettik. Kullanıcı kendi playlist'ini silebilecek fakat başkasının oluşturduğu playlist'i silemeyecek
 import { computed } from 'vue'
 import useDocument from '@/composables/useDocument'
+import useStorage from '@/composables/useStorage'
+import { useRouter } from 'vue-router'
 
 export default {
     props: ['id'],
@@ -33,6 +35,8 @@ export default {
         const { error, document: playlist } = getDocument('playlists', props.id)        // document: playlist diyerek document yerine playlist adını kullanabiliriz (Zorunlu değildir)
         const { user } = getUser()
         const { deleteDoc } = useDocument('playlists', props.id)
+        const { deleteImage } = useStorage()        // Silinen playlist'in fotoğrafını, Firebase Firestore'dan da silebilmek için ekledik
+        const router = useRouter()
 
         // Her seferinde user değişebileceği için computed kullanıyoruz
         // Aşağıdaki 3 koşulu sağladığı takdirde bu fonksiyon true döndürecek yani çalışacak
@@ -41,7 +45,9 @@ export default {
         })
 
         const handleDelete = async () => {
+            await deleteImage(playlist.value.filePath)
             await deleteDoc()
+            router.push({ name: 'Home' })
         }
 
         return { error, playlist, ownership, handleDelete }
