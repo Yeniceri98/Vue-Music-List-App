@@ -57,6 +57,8 @@ export default {
                 })
 
                 isPending.value = false
+                title.value = ''
+                description.value = ''
 
                 if (!error.value) {
                     console.log("Playlist added")
