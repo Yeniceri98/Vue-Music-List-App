@@ -1,8 +1,23 @@
+// rules_version = '2';
+// service firebase.storage {
+//   match /b/{bucket}/o {
+//     match /{allPaths=**} {
+//       allow read, write: if request.auth!=null;
+//     }
+//   }
+// }
+
+
+// Custom Rule
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read, write: if request.auth!=null;
+    match /covers/{userId}/{document=**} {
+      allow read, create: if request.auth!=null;      // write: create + update demektir
+      allow delete: if request.auth.uid == userId;
     }
   }
 }
+
+
+// Sadece firestore.rules dosyasında ayarlama yapıp storage.rules dosyasında ayarlama yapmadığımız zaman üye olmayan bir kullanıcı playlist'i silemese bile playlist'in fotoğrafını silebilir. Bu setup'tan sonra artık fotoğrafı da izinsiz silemez
