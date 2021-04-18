@@ -22,6 +22,7 @@ import useStorage from '@/composables/useStorage'
 import useCollection from '@/composables/useCollection'
 import getUser from '@/composables/getUser'
 import { timestamp } from '../../firebase/config'
+import { useRouter } from 'vue-router'
 
 export default {
     setup() {
@@ -30,6 +31,7 @@ export default {
         const file = ref(null)
         const fileError = ref(null)
         const isPending = ref(false)
+        const router = useRouter()
 
         const { filePath, url, uploadImage } = useStorage()
         const { error, addDoc } = useCollection('playlists')        // Firebase Firestore'un içinde "playlists" adında collection oluşturacak
@@ -45,7 +47,7 @@ export default {
                 console.log("Image uploaded, URL:", url.value)
 
                 // Adding New Collection in Firebase Firestore
-                await addDoc({
+                const res = await addDoc({                  // Aşağıda PlaylistDetails sayfasına yönlendirme yapabilmek için useCollection.js'deki "res" alındı çünkü res'in içinde id vardı
                     title: title.value,
                     description: description.value,
                     userId: user.value.uid,
@@ -62,6 +64,8 @@ export default {
 
                 if (!error.value) {
                     console.log("Playlist added")
+
+                    router.push({ name: 'PlaylistDetails', params: { id: res.id }})      // id, useCollection'daki "res" den alındı
                 }
             }
         }
