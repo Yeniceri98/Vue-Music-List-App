@@ -11,7 +11,7 @@
             <h2>{{ playlist.title }}</h2>
             <p>Created by {{ playlist.userName }}</p>
             <p class="description">{{ playlist.description }}</p>
-            <button v-if="ownership">Delete Playlist</button>
+            <button v-if="ownership" @click="handleDelete">Delete Playlist</button>
         </div>
     </div>
 
@@ -25,12 +25,14 @@
 import getDocument from '@/composables/getDocument'
 import getUser from '@/composables/getUser'             // Kullanıcı bilgilerini almak için import ettik. Kullanıcı kendi playlist'ini silebilecek fakat başkasının oluşturduğu playlist'i silemeyecek
 import { computed } from 'vue'
+import useDocument from '@/composables/useDocument'
 
 export default {
     props: ['id'],
     setup(props) {
         const { error, document: playlist } = getDocument('playlists', props.id)        // document: playlist diyerek document yerine playlist adını kullanabiliriz (Zorunlu değildir)
         const { user } = getUser()
+        const { deleteDoc } = useDocument('playlists', props.id)
 
         // Her seferinde user değişebileceği için computed kullanıyoruz
         // Aşağıdaki 3 koşulu sağladığı takdirde bu fonksiyon true döndürecek yani çalışacak
@@ -38,7 +40,11 @@ export default {
             return playlist.value && user.value && user.value.uid == playlist.value.userId
         })
 
-        return { error, playlist, ownership }
+        const handleDelete = async () => {
+            await deleteDoc()
+        }
+
+        return { error, playlist, ownership, handleDelete }
     }
 }
 </script>
