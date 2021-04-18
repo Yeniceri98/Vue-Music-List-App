@@ -1,9 +1,10 @@
 <template>
     <h2>Playlist Details</h2>
     <div v-if="error" class="error">{{ error }}</div>
-
-    <!-- Playlist Information -->
+    
     <div v-if="playlist" class="playlist-details">
+
+        <!-- Playlist Information -->
         <div class="playlist-info">
             <div class="cover">
                 <img :src="playlist.coverURL">
@@ -13,11 +14,14 @@
             <p class="description">{{ playlist.description }}</p>
             <button v-if="ownership" @click="handleDelete">Delete Playlist</button>
         </div>
-    </div>
 
-    <!-- Song List -->
-    <div class="song-list">
-        <p>Song list</p>
+        <!-- Song List -->
+        <div class="song-list">
+            <AddSong v-if="ownership" :playlist="playlist" />         
+            
+            <!-- Kullanıcılar sadece kendi playlistlerine ekleme yapabilecek (Kullanıcılar farklı kişinin playlist detayları kısmında AddSong component'ini göremeyecek -->
+            <!-- <AddSong /> componentine playlist verilerinin tutulduğu (document) "playlist" prop'unun yolluyoruz. O component'te "songs" array'i oluşturulmuş olacak (Firebase Firestore'da songs arrayi gçrülebilir) -->
+        </div>
     </div>
 </template>
 
@@ -28,9 +32,11 @@ import { computed } from 'vue'
 import useDocument from '@/composables/useDocument'
 import useStorage from '@/composables/useStorage'
 import { useRouter } from 'vue-router'
+import AddSong from '@/components/AddSong'
 
 export default {
     props: ['id'],
+    components: { AddSong },
     setup(props) {
         const { error, document: playlist } = getDocument('playlists', props.id)        // document: playlist diyerek document yerine playlist adını kullanabiliriz (Zorunlu değildir)
         const { user } = getUser()
