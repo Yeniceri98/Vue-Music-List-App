@@ -27,7 +27,7 @@ export default {
             
             if (!error.value) {
                 console.log("user logged in")
-                router.push({ name: 'Home' })
+                router.push({ name: 'UserPlaylists' })
             }
         }
 
