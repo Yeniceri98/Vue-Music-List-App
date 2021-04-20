@@ -24,7 +24,7 @@
                     <h3>{{ song.title }}</h3>    
                     <p>{{ song.artist }}</p>
                 </div>    
-                <button v-if="ownership">Delete</button>
+                <button v-if="ownership" @click="deleteSong(song.id)">Delete</button>
             </div>     
             
             <!-- Kullanıcılar sadece kendi playlistlerine ekleme yapabilecek (Kullanıcılar farklı kişinin playlist detayları kısmında AddSong component'ini göremeyecek -->
@@ -48,8 +48,8 @@ export default {
     setup(props) {
         const { error, document: playlist } = getDocument('playlists', props.id)        // document: playlist diyerek document yerine playlist adını kullanabiliriz (Zorunlu değildir)
         const { user } = getUser()
-        const { deleteDoc } = useDocument('playlists', props.id)
-        const { deleteImage } = useStorage()        // Silinen playlist'in fotoğrafını, Firebase Firestore'dan da silebilmek için ekledik
+        const { deleteDoc, updateDoc } = useDocument('playlists', props.id)
+        const { deleteImage } = useStorage()                                            // Silinen playlist'in fotoğrafını, Firebase Firestore'dan da silebilmek için ekledik
         const router = useRouter()
 
         // Her seferinde user değişebileceği için computed kullanıyoruz
@@ -64,7 +64,12 @@ export default {
             router.push({ name: 'Home' })
         }
 
-        return { error, playlist, ownership, handleDelete }
+        const deleteSong = async (id) => {
+            const songs = playlist.value.songs.filter(song => song.id != id)
+            await updateDoc({ songs: songs })
+        }
+
+        return { error, playlist, ownership, handleDelete, deleteSong }
     }
 }
 </script>
