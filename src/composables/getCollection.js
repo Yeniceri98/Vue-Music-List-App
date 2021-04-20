@@ -2,13 +2,17 @@ import { ref, watchEffect } from 'vue'
 import { projectFirestore } from '../firebase/config'
 
 
-const getCollection = (collection) => {
+const getCollection = (collection, query) => {
     const documents = ref(null)
     const error = ref(null)         // 2 farklı collection'da farklı errorlar olabileceği için bunu global olarak tanımlamadık. Mesela useSignup.js'de errorlar ortak olarak görüntüleneceği için global şekilde tanımladık
 
     // Register the firestore collection reference
     let collectionRef = projectFirestore.collection(collection)
         .orderBy('createdAt')
+
+    if (query) {
+        collectionRef = collectionRef.where(...query)     // https://firebase.google.com/docs/firestore/query-data/queries
+    }
 
     // Real time (Snapshot)
     const unsub = collectionRef.onSnapshot(snap => {
