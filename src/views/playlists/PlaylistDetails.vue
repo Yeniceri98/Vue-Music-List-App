@@ -17,7 +17,15 @@
 
         <!-- Song List -->
         <div class="song-list">
-            <AddSong v-if="ownership" :playlist="playlist" />         
+            <div v-if="!playlist.songs.length">There is no song in this playlist</div>
+            <AddSong v-if="ownership" :playlist="playlist" />    
+            <div v-for="song in playlist.songs" :key="song.id" class="single-song">
+                <div class="details">
+                    <h3>{{ song.title }}</h3>    
+                    <p>{{ song.artist }}</p>
+                </div>    
+                <button v-if="ownership">Delete</button>
+            </div>     
             
             <!-- Kullanıcılar sadece kendi playlistlerine ekleme yapabilecek (Kullanıcılar farklı kişinin playlist detayları kısmında AddSong component'ini göremeyecek -->
             <!-- <AddSong /> componentine playlist verilerinin tutulduğu (document) "playlist" prop'unun yolluyoruz. O component'te "songs" array'i oluşturulmuş olacak (Firebase Firestore'da songs arrayi gçrülebilir) -->
@@ -101,5 +109,13 @@ export default {
     }
     .description {
         text-align: left;
+    }
+    .single-song {
+        padding: 10px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px dashed var(--secondary);
+        margin-bottom: 20px;
     }
 </style>
