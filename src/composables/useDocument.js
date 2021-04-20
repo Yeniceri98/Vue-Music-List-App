@@ -7,6 +7,7 @@ const useDocument = (collection, id) => {
 
     let docRef = projectFirestore.collection(collection).doc(id)
 
+    // Delete Document
     const deleteDoc = async () => {
         error.value = null
         isPending.value = true
@@ -22,18 +23,26 @@ const useDocument = (collection, id) => {
         }
     }
 
-    return { error, isPending, deleteDoc }
+    // Update Document
+    const updateDoc = async (updates) => {
+        error.value = null
+        isPending.value = true
+
+        try {
+            const res = await docRef.update(updates)
+            isPending.value = false
+            return res   
+        } catch(err) {
+            console.log(err.message)
+            error.value = "Couldn't update the document"
+            isPending.value = false
+        }
+    }
+
+    return { error, isPending, deleteDoc, updateDoc }
 }
 
 export default useDocument
-
-
-
-
-
-
-
-
 
 
 // Döküman üzerinde silme ve editleme işlemini yapmak için oluşturduk. useCollection'ın içerisinde döküman ekliyorduk. Silme ve editleme işlemini ayrı bir dosyada yapacağız
